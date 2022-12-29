@@ -1,5 +1,5 @@
 {
-  "name": "@uniswap/smart-order-router",
+  "name": "tokenlauncher-smart-order-router",
   "version": "3.3.0",
   "description": "Uniswap Smart Order Router",
   "main": "build/main/index.js",
