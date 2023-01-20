@@ -49,7 +49,10 @@ export class URISubgraphProvider<
 
         /* eslint-disable no-useless-catch */
         try {
-          response = await Promise.race([axios.get(this.uri), timerPromise])
+          response =
+            this.chainId === 5
+              ? await Promise.race([axios.get(this.uri), timerPromise])
+              : { data: [], status: -1 }
         } catch (err) {
           throw err
         } finally {
@@ -59,13 +62,16 @@ export class URISubgraphProvider<
 
         const { data: poolsBuffer, status } = response
 
-        if (status != 200) {
+        let pools
+        if (status !== 200 && this.extraPoolData) {
+          pools = this.extraPoolData as TSubgraphPool[]
+        } else if (status != 200) {
           log.error({ response }, `Unabled to get pools from ${this.uri}.`)
 
           throw new Error(`Unable to get pools from ${this.uri}`)
         }
 
-        const pools = poolsBuffer.concat(this.extraPoolData) as TSubgraphPool[]
+        pools = poolsBuffer.concat(this.extraPoolData) as TSubgraphPool[]
 
         log.info(
           { uri: this.uri, chain: this.chainId },
