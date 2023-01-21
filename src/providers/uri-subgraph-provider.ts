@@ -29,6 +29,7 @@ export class URISubgraphProvider<
   ) {}
 
   public async getPools (): Promise<TSubgraphPool[]> {
+    console.log('getPools!!!')
     log.info(
       { uri: this.uri },
       `About to get subgraph pools from URI ${this.uri}`
@@ -38,6 +39,7 @@ export class URISubgraphProvider<
 
     await retry(
       async () => {
+        console.log('RETRY', this.chainId, this.extraPoolData)
         const timeout = new Timeout()
         const timerPromise = timeout.set(this.timeout).then(() => {
           throw new Error(
@@ -50,7 +52,7 @@ export class URISubgraphProvider<
         /* eslint-disable no-useless-catch */
         try {
           response =
-            this.chainId === 5
+            this.chainId !== 5
               ? await Promise.race([axios.get(this.uri), timerPromise])
               : { data: [], status: -1 }
         } catch (err) {
